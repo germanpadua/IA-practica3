@@ -1,5 +1,5 @@
-#include "AIPlayer.h"
-#include "Parchis.h"
+# include "AIPlayer.h"
+# include "Parchis.h"
 
 const double masinf = 9999999999.0, menosinf = -9999999999.0;
 const double gana = masinf - 1, pierde = menosinf + 1;
@@ -7,10 +7,9 @@ const int num_pieces = 4;
 const int PROFUNDIDAD_MINIMAX = 4;  // Umbral maximo de profundidad para el metodo MiniMax
 const int PROFUNDIDAD_ALFABETA = 6; // Umbral maximo de profundidad para la poda Alfa_Beta
 
-bool AIPlayer::move()
-{
+bool AIPlayer::move(){
     cout << "Realizo un movimiento automatico" << endl;
-
+    
     color c_piece;
     int id_piece;
     int dice;
@@ -22,35 +21,7 @@ bool AIPlayer::move()
     return true;
 }
 
-void AIPlayer::think(color &c_piece, int &id_piece, int &dice) const
-{
-    /*
-    // El siguiente código se proporciona como sugerencia para iniciar la implementación del agente.
-
-    double valor; // Almacena el valor con el que se etiqueta el estado tras el proceso de busqueda.
-    double alpha = menosinf, beta = masinf; // Cotas iniciales de la poda AlfaBeta
-    // Llamada a la función para la poda (los parámetros son solo una sugerencia, se pueden modificar).
-    valor = Poda_AlfaBeta(*actual, jugador, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, alpha, beta, ValoracionTest);
-    cout << "Valor MiniMax: " << valor << "  Accion: " << str(c_piece) << " " << id_piece << " " << dice << endl;
-
-    // ----------------------------------------------------------------- //
-
-    // Si quiero poder manejar varias heurísticas, puedo usar la variable id del agente para usar una u otra.
-    switch(id){
-        case 0:
-            valor = Poda_AlfaBeta(*actual, jugador, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, alpha, beta, ValoracionTest);
-            break;
-        case 1:
-            valor = Poda_AlfaBeta(*actual, jugador, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, alpha, beta, MiValoracion1);
-            break;
-        case 2:
-            valor = Poda_AlfaBeta(*actual, jugador, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, alpha, beta, MiValoracion2);
-            break;
-    }
-    cout << "Valor MiniMax: " << valor << "  Accion: " << str(c_piece) << " " << id_piece << " " << dice << endl;
-
-    */
-
+void AIPlayer::think(color & c_piece, int & id_piece, int & dice) const{
     switch (id)
     {
     case 0:
@@ -245,7 +216,7 @@ void AIPlayer::thinkMejorOpcion(color &c_piece, int &id_piece, int &dice) const
 void AIPlayer::thinkPodaAlfaBeta(color &c_piece, int &id_piece, int &dice) const
 {
 
-    Poda_AlfaBeta(*actual, this->id, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, INT16_MIN, INT16_MAX, calcularHeuristica);
+    Poda_AlfaBeta(*actual, this->id, 0, PROFUNDIDAD_ALFABETA, c_piece, id_piece, dice, INT16_MIN, INT16_MAX, heuristica2);
 }
 
 double AIPlayer::Poda_AlfaBeta(const Parchis &actual, int jugador, int profundidad, int profundidad_max, color &c_piece, int &id_piece, int &dice, double alpha, double beta, double (*heuristic)(const Parchis &, int)) const
@@ -322,43 +293,7 @@ double AIPlayer::Poda_AlfaBeta(const Parchis &actual, int jugador, int profundid
     }
 }
 
-/*
-int AIPlayer::calcularHeuristica(Parchis &origen)
-{
-    int heuristica = 0;
-
-    if (origen.getWinner() == this->jugador)
-    {
-        heuristica = INT16_MAX - 1;
-    }
-    else if (origen.getWinner() != this->jugador)
-    {
-        heuristica = INT16_MIN + 1;
-    }
-    else
-    {
-        for (int i = 0; i < origen.getPlayerColors(this->jugador).size(); i++)
-        {
-            heuristica = heuristica + 10 * origen.piecesAtGoal(origen.getPlayerColors(this->jugador)[i]);
-
-            for (int j = 0; j < 4; j++)
-                heuristica = heuristica + origen.distanceToGoal(origen.getPlayerColors(this->jugador)[i], j);
-        }
-
-        for (int i = 0; i < origen.getPlayerColors((this->jugador + 1) % 2).size(); i++)
-        {
-            heuristica = heuristica - 10 * origen.piecesAtGoal(origen.getPlayerColors((this->jugador + 1) % 2)[i]);
-
-            for (int j = 0; j < 4; j++)
-                heuristica = heuristica - origen.distanceToGoal(origen.getPlayerColors((this->jugador + 1) % 2)[i], j);
-        }
-    }
-
-    return heuristica;
-}
-*/
-
-double AIPlayer::calcularHeuristica(const Parchis &estado, int jugador){
+double AIPlayer::heuristica1(const Parchis &estado, int jugador){
     
     int ganador = estado.getWinner();
     int oponente = (jugador + 1) % 2;
@@ -403,7 +338,7 @@ double AIPlayer::calcularHeuristica(const Parchis &estado, int jugador){
                 puntuacion_jugador = puntuacion_jugador - estado.distanceToGoal(c, j);
 
                 if(hayFichaDistintaDetras(estado, c, estado.getBoard().getPiece(c, j))){
-                    puntuacion_jugador = puntuacion_jugador - 20;
+                    puntuacion_jugador = puntuacion_jugador - 200;
                 }
             }
 
@@ -455,6 +390,52 @@ double AIPlayer::calcularHeuristica(const Parchis &estado, int jugador){
 
 }
 
+double AIPlayer::heuristica2(const Parchis &estado, int jugador){
+    
+    int ganador = estado.getWinner();
+    int oponente = (jugador + 1) % 2;
+
+    // Si hay un ganador, devuelvo más/menos infinito, según si he ganado yo o el oponente.
+    if (ganador == jugador)
+    {
+        return gana;
+    }
+    else if (ganador == oponente)
+    {
+        return pierde;
+    }
+    else
+    {
+        
+        // Colores que juega mi jugador y colores del oponente
+        vector<color> my_colors = estado.getPlayerColors(jugador);
+
+        // Recorro todas las fichas de mi jugador
+        int puntuacion_jugador = 0;
+        // Recorro colores de mi jugador.
+        for (int i = 0; i < my_colors.size(); i++)
+        {
+            color c = my_colors[i];
+
+            
+            for (int j = 0; j < num_pieces; j++)
+            {            
+                puntuacion_jugador = puntuacion_jugador - estado.distanceToGoal(c, j);
+
+                if(hayFichaDistintaDetras(estado, c, estado.getBoard().getPiece(c, j))){
+                    puntuacion_jugador = puntuacion_jugador - 5;
+                }
+            }
+
+            puntuacion_jugador = puntuacion_jugador - estado.piecesAtHome(c)*10;
+            
+        }
+
+        return puntuacion_jugador;
+    }
+
+}
+
 bool AIPlayer::hayFichaDistintaDetras(const Parchis &estado, color c, Box b){
     vector<color> colores = {red, green, yellow, blue};
 
@@ -480,6 +461,7 @@ double AIPlayer::ValoracionTest(const Parchis &estado, int jugador)
 {
     // Heurística de prueba proporcionada para validar el funcionamiento del algoritmo de búsqueda.
 
+
     int ganador = estado.getWinner();
     int oponente = (jugador + 1) % 2;
 
@@ -504,7 +486,7 @@ double AIPlayer::ValoracionTest(const Parchis &estado, int jugador)
         for (int i = 0; i < my_colors.size(); i++)
         {
             color c = my_colors[i];
-            // Reco./bin/Parchis --p1 AI 0 Random --p2 AI 1 "Random listo"rro las fichas de ese color.
+            // Recorro las fichas de ese color.
             for (int j = 0; j < num_pieces; j++)
             {
                 // Valoro positivamente que la ficha esté en casilla segura o meta.
@@ -544,3 +526,4 @@ double AIPlayer::ValoracionTest(const Parchis &estado, int jugador)
         return puntuacion_jugador - puntuacion_oponente;
     }
 }
+

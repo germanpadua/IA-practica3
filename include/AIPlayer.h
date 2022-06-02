@@ -63,6 +63,7 @@ class AIPlayer: public Player{
 
         void thinkPodaAlfaBeta(color & c_piece,  int & id_piece, int & dice) const;
 
+
         /**
          * @brief Método que determina si el player es inteligente (decide el mejor movimiento)
          * o no. True para AIPlayer.
@@ -81,15 +82,15 @@ class AIPlayer: public Player{
          */
         static double ValoracionTest(const Parchis &estado, int jugador);
 
+        static double heuristica1(const Parchis &estado, int jugador);
 
-        static double calcularHeuristica(const Parchis &estado, int jugador);
+        static double heuristica2(const Parchis &estado, int jugador);
 
         /**
          * @brief Propuesta de declaración de la función poda alfa-beta.
          * La propuesta es solo sugerencia, los parámetros de la declaración podrían variar.
          */
         double Poda_AlfaBeta(const Parchis &actual, int jugador, int profundidad, int profundidad_max, color &c_piece, int &id_piece, int &dice, double alpha, double beta, double (*heuristic)(const Parchis &, int)) const;
-
         static bool hayFichaDistintaDetras(const Parchis &estado, color c, Box b);
 };
 #endif
