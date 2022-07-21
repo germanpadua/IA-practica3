@@ -1,10 +1,5 @@
 # Práctica 3 de *Inteligencia Artificial*, curso 2021/2022
 
-## Realización de la práctica
-El guión (disponible en [PRADO](https://pradogrado2122.ugr.es/)) contiene toda la información sobre en qué consiste la práctica3. Leelo con atención.
-También tienes a tu disposición un tutorial con los primeros pasos a realizar.
-
-
 ### Instalación
 
 En el guión y el tutorial tienes las instrucciones. 
